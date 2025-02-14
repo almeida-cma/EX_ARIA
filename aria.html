@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplos de ARIA</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo do botão de fechar */
+        .close-button {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            background: #cc0000;
+        }
+
+        /* Estilo do acordeão */
+        .accordion button {
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .accordion button[aria-expanded="true"] {
+            background: #ddd;
+        }
+
+        .accordion .content {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-top: none;
+            display: none;
+        }
+
+        .accordion .content[aria-hidden="false"] {
+            display: block;
+        }
+
+        /* Estilo do alerta */
+        .alert {
+            padding: 10px;
+            background: #dff0d8;
+            border: 1px solid #d6e9c6;
+            color: #3c763d;
+            margin-top: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        /* Estilo do formulário */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group input[aria-invalid="true"] {
+            border-color: #ff4444;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Painel do Usuário</h1>
+
+        <!-- Exemplo 1: Botão de fechar com aria-label -->
+        <button class="close-button" aria-label="Fechar painel" onclick="fecharPainel()">X</button>
+
+        <!-- Exemplo 2: Acordeão com ARIA -->
+        <div class="accordion">
+            <button id="accordion1" aria-expanded="false" aria-controls="content1">
+                Informações do Usuário
+            </button>
+            <div id="content1" role="region" aria-labelledby="accordion1" class="content" aria-hidden="true">
+                <p>Nome: João Silva</p>
+                <p>Email: joao.silva@example.com</p>
+            </div>
+        </div>
+
+        <!-- Exemplo 3: Alerta dinâmico com ARIA -->
+        <div id="alert" role="alert" aria-live="assertive" class="alert">
+            Novo conteúdo carregado com sucesso!
+        </div>
+
+        <!-- Exemplo 4: Formulário acessível com ARIA -->
+        <form id="formulario" onsubmit="validarFormulario(event)">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" aria-required="true" aria-describedby="nome-erro">
+                <span id="nome-erro" class="error-message">Campo obrigatório.</span>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" aria-required="true" aria-describedby="email-erro">
+                <span id="email-erro" class="error-message">Campo obrigatório.</span>
+            </div>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        // Exemplo 1: Função para fechar o painel
+        function fecharPainel() {
+            alert("Painel fechado!");
+        }
+
+        // Exemplo 2: Lógica do acordeão
+        document.querySelectorAll('.accordion button').forEach(button => {
+            button.addEventListener('click', () => {
+                const expanded = button.getAttribute('aria-expanded') === 'true' || false;
+                button.setAttribute('aria-expanded', !expanded);
+                const content = document.getElementById(button.getAttribute('aria-controls'));
+                content.setAttribute('aria-hidden', !expanded);
+            });
+        });
+
+        // Exemplo 3: Exibir alerta dinâmico
+        setTimeout(() => {
+            const alert = document.getElementById('alert');
+            alert.style.display = 'block';
+        }, 3000); // Exibe o alerta após 3 segundos
+
+        // Exemplo 4: Validação do formulário
+        function validarFormulario(event) {
+            event.preventDefault();
+            const nome = document.getElementById('nome');
+            const email = document.getElementById('email');
+            let valido = true;
+
+            if (!nome.value) {
+                nome.setAttribute('aria-invalid', 'true');
+                document.getElementById('nome-erro').style.display = 'block';
+                valido = false;
+            } else {
+                nome.setAttribute('aria-invalid', 'false');
+                document.getElementById('nome-erro').style.display = 'none';
+            }
+
+            if (!email.value) {
+                email.setAttribute('aria-invalid', 'true');
+                document.getElementById('email-erro').style.display = 'block';
+                valido = false;
+            } else {
+                email.setAttribute('aria-invalid', 'false');
+                document.getElementById('email-erro').style.display = 'none';
+            }
+
+            if (valido) {
+                alert("Formulário enviado com sucesso!");
+            }
+        }
+    </script>
+</body>
+</html>
